@@ -11,4 +11,12 @@ const startServer = async () => {
   }
 };
 
-startServer();
+require('./bootstrap')().then(
+  () => {
+    startServer();
+  }
+).catch(
+  err => {
+    console.log(err);
+  }
+);
