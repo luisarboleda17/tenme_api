@@ -1,5 +1,7 @@
 /** Created by Luis Arboleda on 23 Jun. 2019 **/
 
+require('dotenv').config({path: `./.env.${process.env.ENV || 'dev'}`});
+
 const app = require('./app');
 
 const startServer = async () => {
@@ -18,5 +20,6 @@ require('./bootstrap')().then(
 ).catch(
   err => {
     console.log(err);
+    process.exit(1);
   }
 );

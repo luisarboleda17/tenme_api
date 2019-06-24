@@ -19,6 +19,8 @@
   "homepage": "https://github.com/luisarboleda17/tenme_api#readme",
   "dependencies": {
     "aws-sdk": "^2.480.0",
+    "crypto": "^1.0.1",
+    "dotenv": "^8.0.0",
     "hapi": "^18.1.0"
   },
   "devDependencies": {
