@@ -2,15 +2,28 @@
 
 const Hapi = require('hapi');
 
-const registerRoutes = require('./routes');
+const routes = require('./routes');
+const plugins = require('./plugins');
 
 const app = Hapi.server({
-    port: process.env.PORT || 3000,
-    host: 'localhost',
-    app: {},
+  port: process.env.PORT || 3000,
+  host: 'localhost',
+  app: {
+    name: 'Tenme',
+    env: process.env.ENV
+  },
 });
 
-// Register routes
-registerRoutes(app);
+app.register(plugins)
+  .then(
+    () => {
+      app.route(routes);
+    }
+  )
+  .catch(
+    err => {
+      console.error('Error loading plugins', err);
+    }
+  );
 
 module.exports = app;

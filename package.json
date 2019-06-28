@@ -12,16 +12,21 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "Apache License 1.1",
   "bugs": {
     "url": "https://github.com/luisarboleda17/tenme_api/issues"
   },
   "homepage": "https://github.com/luisarboleda17/tenme_api#readme",
   "dependencies": {
+    "@hapi/boom": "^7.4.2",
+    "@hapi/hoek": "^7.2.1",
+    "@hapi/joi": "^15.1.0",
     "aws-sdk": "^2.480.0",
+    "bcrypt": "^3.0.6",
     "crypto": "^1.0.1",
     "dotenv": "^8.0.0",
-    "hapi": "^18.1.0"
+    "hapi": "^18.1.0",
+    "jsonwebtoken": "^8.5.1"
   },
   "devDependencies": {
     "nodemon": "^1.19.1"

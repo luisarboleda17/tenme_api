@@ -6,10 +6,12 @@ const app = require('./app');
 
 const startServer = async () => {
   try {
-      await app.start();
-      console.log(`Server up in ${app.info.uri}`);
-  }   catch (error) {
-      console.log(`Error starting server: ${error}`);
+    await app.start();
+    console.info(`${app.settings.app.name} app is up.`);
+    console.info(`Environment: ${app.settings.app.env}`);
+    console.info(`URL: ${app.info.uri}`);
+  } catch (error) {
+    console.log(`Error starting server: ${error}`);
   }
 };
 
@@ -19,7 +21,7 @@ require('./bootstrap')().then(
   }
 ).catch(
   err => {
-    console.log(err);
+    console.log('Error loading server: ', err);
     process.exit(1);
   }
 );
