@@ -1,6 +1,6 @@
 
-const loginRoutes = require('./login');
+const authRoutes = require('./auth');
 
 module.exports = [
-  ...loginRoutes,
+  ...authRoutes,
 ];

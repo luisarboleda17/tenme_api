@@ -1,6 +1,5 @@
 
 const boom = require('@hapi/boom');
-// const joi = require('@hapi/joi');
 const hoek = require('@hapi/hoek');
 const jwt = require('jsonwebtoken');
 

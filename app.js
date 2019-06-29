@@ -5,25 +5,24 @@ const Hapi = require('hapi');
 const routes = require('./routes');
 const plugins = require('./plugins');
 
-const app = Hapi.server({
-  port: process.env.PORT || 3000,
-  host: 'localhost',
-  app: {
-    name: 'Tenme',
-    env: process.env.ENV
-  },
-});
+module.exports = () => new Promise(
+  async (resolve, reject) => {
+    const app = Hapi.server({
+      port: process.env.PORT || 3000,
+      host: 'localhost',
+      app: {
+        name: 'Tenme',
+        env: process.env.ENV
+      },
+    });
 
-app.register(plugins)
-  .then(
-    () => {
+    try {
+      await app.register(plugins);
       app.route(routes);
-    }
-  )
-  .catch(
-    err => {
+      resolve(app);
+    } catch(err) {
       console.error('Error loading plugins', err);
+      reject(err);
     }
-  );
-
-module.exports = app;
+  }
+);
