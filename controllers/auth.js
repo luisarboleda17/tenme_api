@@ -4,9 +4,28 @@ const { password: { encryptPassword, comparePassword }, auth: { createToken } } 
 const { checkUserExist, getUser, updateLogin } = require('../services/user');
 const { USER_EXIST, WRONG_PASSWORD } = require('../errors');
 
-const loginWithFacebook = (facebookId, email) => {
+/**
+ * Login using facebook credentials
+ * @param facebookId
+ * @returns {Promise<any>}
+ */
+const loginWithFacebook = (facebookId) => new Promise(
+  async (resolve, reject) => {
+    try {
+      let user = await getUser({ facebookId });
+      const token = await createToken(user);
 
-};
+      user = await updateLogin(user.id, token);
+      resolve({
+        token,
+        user,
+      });
+    } catch(err) {
+      console.error(err);
+      reject(err);
+    }
+  }
+);
 
 /**
  * Login with credentials
