@@ -1,4 +1,5 @@
 
 module.exports = {
-  password: require('./password')
+  password: require('./password'),
+  auth: require('./auth')
 };

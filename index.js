@@ -11,7 +11,7 @@ const startServer = async () => {
       process.env.DB_URI,
       {
         useNewUrlParser: true,
-        useFindAndModify: true,
+        useFindAndModify: false,
         useCreateIndex: true,
       }
     );

@@ -1,17 +1,34 @@
 
 const { user: User } = require('../models');
-const { password } = require('../utils');
-const { checkUserExist } = require('../services/user');
-const { USER_EXIST } = require('../errors');
+const { password: { encryptPassword, comparePassword }, auth: { createToken } } = require('../utils');
+const { checkUserExist, getUser, updateLogin } = require('../services/user');
+const { USER_EXIST, WRONG_PASSWORD } = require('../errors');
 
 const loginWithFacebook = (facebookId, email) => {
 
 };
 
+/**
+ * Login with credentials
+ * @param phone
+ * @param password
+ * @returns {Promise<any>}
+ */
 const loginWithCredentials = (phone, password) => new Promise(
-  (resolve, reject) => {
+  async (resolve, reject) => {
     try {
+      let user = await getUser({ completePhone: phone });
 
+      if (await comparePassword(password, user.password)) {
+        const token = await createToken(user);
+        user = await updateLogin(user.id, token);
+        resolve({
+          token,
+          user,
+        });
+      } else {
+        reject(new WRONG_PASSWORD());
+      }
     } catch(err) {
       console.error(err);
       reject(err);
@@ -31,11 +48,19 @@ const signUp = data => new Promise(
 
       if (!(await checkUserExist(completePhone, data.facebookId))) {
         if (data.password) {
-          data.password = await password.encryptPassword(data.password);
+          data.password = await encryptPassword(data.password);
         }
         data.completePhone = completePhone;
-        const newUser = new User(data);
-        resolve(await newUser.save());
+
+        let newUser = new User(data);
+        await newUser.save();
+
+        const token = await createToken(newUser);
+        newUser = await updateLogin(newUser.id, token);
+        resolve({
+          token,
+          user: newUser,
+        });
       } else {
         reject(new USER_EXIST());
       }

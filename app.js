@@ -4,6 +4,7 @@ const Hapi = require('hapi');
 
 const routes = require('./routes');
 const plugins = require('./plugins');
+const { APP_NAME } = require('./commons');
 
 module.exports = () => new Promise(
   async (resolve, reject) => {
@@ -11,7 +12,7 @@ module.exports = () => new Promise(
       port: process.env.PORT || 3000,
       host: 'localhost',
       app: {
-        name: 'Tenme',
+        name: APP_NAME,
         env: process.env.ENV
       },
     });

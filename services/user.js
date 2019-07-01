@@ -1,5 +1,6 @@
 
 const { user: User } = require('../models');
+const { USER_NOT_EXIST } = require('../errors');
 
 /**
  * Check if user exist on database
@@ -32,6 +33,67 @@ const checkUserExist = (completePhone, facebookId) => new Promise(
   }
 );
 
+/**
+ * Get user with query params
+ * @param params
+ * @returns {Promise<any>}
+ */
+const getUser = (params) => new Promise(
+  (resolve, reject) => {
+    User.findOne(
+      params,
+      (err, user) => {
+        if (err) {
+          reject(err);
+        } else {
+          if (user) {
+            resolve(user);
+          } else {
+            reject(new USER_NOT_EXIST());
+          }
+        }
+      }
+    );
+  }
+);
+
+/**
+ * Update user token and registered date
+ * @param id
+ * @param token
+ * @returns {Promise<any>}
+ */
+const updateLogin = (id, token) => new Promise(
+  (resolve, reject) => {
+    User.findOneAndUpdate(
+      {
+        _id: id,
+      },
+      {
+        accessToken: token,
+        registeredAt: new Date().getTime()
+      },
+      {
+        new: true,
+        upsert: false,
+      },
+      (err, user) => {
+        if (err) {
+          reject(err);
+        } else {
+          if (user) {
+            resolve(user);
+          } else {
+            reject(new USER_NOT_EXIST());
+          }
+        }
+      }
+    );
+  }
+);
+
 module.exports = {
-  checkUserExist
+  checkUserExist,
+  getUser,
+  updateLogin
 };

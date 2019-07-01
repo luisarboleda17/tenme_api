@@ -3,6 +3,8 @@ const boom = require('@hapi/boom');
 const hoek = require('@hapi/hoek');
 const jwt = require('jsonwebtoken');
 
+const { DEFAULT_TOKEN_KEY } = require('../commons');
+
 /**
  * Register auth scheme
  * @param server
@@ -54,7 +56,7 @@ const registerStrategy = server => server.auth.strategy(
   'auth-jwt',
   'auth-jwt',
   {
-    key: 'Luis'
+    key: DEFAULT_TOKEN_KEY // TODO: Add public / private key
   }
 );
 

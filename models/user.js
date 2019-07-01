@@ -6,7 +6,7 @@ module.exports = (mongoose, options) => {
 
   const userSchema = new Schema(
     {
-      accessToken: { type: String, trim: true, index: true, unique: true, sparse: true },
+      accessToken: { type: String, trim: true, index: true, unique: true, sparse: true, select: false },
       password: { type: String, required: false },
       balance: { type: Number, required: true, default: 0 },
       score: { type: Number, required: true, default: 5 }, // TODO: Add valid initial user score
