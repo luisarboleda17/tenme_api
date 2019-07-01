@@ -1,9 +1,6 @@
 
-const loginRoutes = require('./login');
+const authRoutes = require('./auth');
 
-module.exports = (app) => {
-    app.route([
-        ...loginRoutes,
-    ]);
-    return app;
-};
+module.exports = [
+  ...authRoutes,
+];

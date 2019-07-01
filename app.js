@@ -2,15 +2,28 @@
 
 const Hapi = require('hapi');
 
-const registerRoutes = require('./routes');
+const routes = require('./routes');
+const plugins = require('./plugins');
+const { APP_NAME } = require('./commons');
 
-const app = Hapi.server({
-    port: process.env.PORT || 3000,
-    host: 'localhost',
-    app: {},
-});
+module.exports = () => new Promise(
+  async (resolve, reject) => {
+    const app = Hapi.server({
+      port: process.env.PORT || 3000,
+      host: 'localhost',
+      app: {
+        name: APP_NAME,
+        env: process.env.ENV
+      },
+    });
 
-// Register routes
-registerRoutes(app);
-
-module.exports = app;
+    try {
+      await app.register(plugins);
+      app.route(routes);
+      resolve(app);
+    } catch(err) {
+      console.error('Error loading plugins', err);
+      reject(err);
+    }
+  }
+);

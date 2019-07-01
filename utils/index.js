@@ -1,5 +1,5 @@
 
 module.exports = {
-  aws: require('./aws'),
-  sha1: require('./sha1')
+  password: require('./password'),
+  auth: require('./auth')
 };
