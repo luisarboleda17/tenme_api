@@ -1,5 +1,6 @@
 
 const boom = require('@hapi/boom');
+const { USER_EXIST } = require('../errors');
 
 const {
   signUp,
@@ -22,8 +23,13 @@ module.exports = [
         await signUp(userData);
         return h.response().code(201);
       } catch(err) {
-        console.log(err);
-        throw boom.internal(err);
+        if (err instanceof USER_EXIST) {
+          throw boom.conflict(err);
+        } else {
+          console.log(err);
+          throw boom.internal(err);
+        }
+
       }
     }
   }

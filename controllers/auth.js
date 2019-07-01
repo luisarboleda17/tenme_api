@@ -1,6 +1,8 @@
 
 const { user: User } = require('../models');
 const { password } = require('../utils');
+const { checkUserExist } = require('../services/user');
+const { USER_EXIST } = require('../errors');
 
 const loginWithFacebook = (facebookId, email) => {
 
@@ -25,12 +27,18 @@ const loginWithCredentials = (phone, password) => new Promise(
 const signUp = data => new Promise(
   async (resolve, reject) => {
     try {
-      if (data.password) {
-        data.password = await password.encryptPassword(data.password);
+      const completePhone = parseInt(data.phone.countryCode.toString() + data.phone.phoneNumber.toString(), 10);
+
+      if (!(await checkUserExist(completePhone, data.facebookId))) {
+        if (data.password) {
+          data.password = await password.encryptPassword(data.password);
+        }
+        data.completePhone = completePhone;
+        const newUser = new User(data);
+        resolve(await newUser.save());
+      } else {
+        reject(new USER_EXIST());
       }
-      data.completePhone = parseInt(data.phone.countryCode.toString() + data.phone.phoneNumber.toString(), 10);
-      const newUser = new User(data);
-      resolve(await newUser.save());
     } catch(err) {
       console.error(err);
       reject(err);
