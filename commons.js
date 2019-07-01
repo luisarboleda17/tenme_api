@@ -7,5 +7,6 @@ module.exports = {
   DOCUMENT_TYPES: {
     ID: 'id',
     PASSPORT: 'passport'
-  }
+  },
+  PASSWORD_SALT_ROUNDS: 10,
 };
