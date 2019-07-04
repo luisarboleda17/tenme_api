@@ -5,10 +5,12 @@ const { USER_EXIST, WRONG_PASSWORD, USER_NOT_EXIST } = require('../errors');
 const {
   signUp,
   loginWithCredentials,
-  loginWithFacebook
+  loginWithFacebook,
+  checkUserExistence
 } = require('../controllers/auth');
 const newUserScheme = require('../schemes/new-user');
 const loginScheme = require('../schemes/login');
+const userExistenceScheme = require('../schemes/user-existence');
 
 module.exports = [
   {
@@ -58,6 +60,23 @@ module.exports = [
           console.log(err);
           throw boom.internal(err);
         }
+      }
+    }
+  },
+  {
+    method: 'GET',
+    path: '/user/{phone}',
+    options: {
+      validate: {
+        params: userExistenceScheme
+      }
+    },
+    handler: async (req, h) => {
+      try {
+        return h.response({ exist: await checkUserExistence(req.params.phone) }).code(200);
+      } catch(err) {
+        console.log(err);
+        throw boom.internal(err);
       }
     }
   }
