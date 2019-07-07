@@ -15,7 +15,7 @@ const userExistenceScheme = require('../schemes/user-existence');
 module.exports = [
   {
     method: 'POST',
-    path: '/signup',
+    path: '/auth/signup',
     options: {
       validate: {
         payload: newUserScheme
@@ -38,7 +38,7 @@ module.exports = [
   },
   {
     method: 'POST',
-    path: '/login',
+    path: '/auth/login',
     options: {
       validate: {
         payload: loginScheme
@@ -65,7 +65,7 @@ module.exports = [
   },
   {
     method: 'GET',
-    path: '/user/{phone}',
+    path: '/auth/user/{phone}',
     options: {
       validate: {
         params: userExistenceScheme
