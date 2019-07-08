@@ -7,7 +7,8 @@ const {
   getZones,
   getServices,
   createService,
-  getServiceById
+  getServiceById,
+  requestService
 } = require('../controllers/services');
 const newServiceScheme = require('../schemes/new-service');
 const requestServiceScheme = require('../schemes/request-service');
@@ -63,6 +64,23 @@ module.exports = [
     handler: async (req, h) => {
       try {
         return h.response(await getServiceById(req.params.id)).code(200);
+      } catch(err) {
+        console.log(err);
+        throw boom.internal(err);
+      }
+    }
+  },
+  {
+    method: 'POST',
+    path: '/services/{id}/request',
+    options: {
+      validate: {
+        params: requestServiceScheme
+      }
+    },
+    handler: async (req, h) => {
+      try {
+        return h.response(await requestService(req.params.id, req.auth.artifacts.id)).code(200);
       } catch(err) {
         console.log(err);
         throw boom.internal(err);

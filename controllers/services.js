@@ -1,6 +1,7 @@
 
-const { category: Category, zone: Zone, service: Service } = require('../models');
+const { category: Category, zone: Zone, service: Service, user: User } = require('../models');
 const { getService } = require('../services/service');
+const { addServiceRequest } = require('../services/user');
 
 /**
  * Get all categories
@@ -75,10 +76,19 @@ const createService = (data, userId) => new Promise(
  */
 const getServiceById = id => getService(id);
 
+/**
+ * Request service
+ * @param id
+ * @param userId
+ * @returns {Promise<any>}
+ */
+const requestService = (id, userId) => addServiceRequest(userId, id);
+
 module.exports = {
   getCategories,
   getZones,
   getServices,
   createService,
-  getServiceById
+  getServiceById,
+  requestService
 };
