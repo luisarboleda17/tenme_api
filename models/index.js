@@ -12,4 +12,5 @@ module.exports = {
   user: require('./user')(Mongoose, modelOptions),
   category: require('./category')(Mongoose, modelOptions),
   zone: require('./zone')(Mongoose, modelOptions),
+  service: require('./service')(Mongoose, modelOptions),
 };

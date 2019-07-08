@@ -4,7 +4,8 @@ const boom = require('@hapi/boom');
 const {  } = require('../errors');
 const {
   getCategories,
-  getZones
+  getZones,
+  getServices
 } = require('../controllers/services');
 // const newUserScheme = require('../schemes/new-user');
 
@@ -21,6 +22,13 @@ module.exports = [
     path: '/services/zones',
     handler: async (req, h) => {
       return h.response(await getZones()).code(200);
+    }
+  },
+  {
+    method: 'GET',
+    path: '/services',
+    handler: async (req, h) => {
+      return h.response(await getServices()).code(200);
     }
   }
 ];

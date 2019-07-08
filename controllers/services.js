@@ -1,5 +1,5 @@
 
-const { category: Category, zone: Zone } = require('../models');
+const { category: Category, zone: Zone, service: Service } = require('../models');
 const {  } = require('../utils');
 const {  } = require('../services/user');
 const {  } = require('../errors');
@@ -36,7 +36,24 @@ const getZones = () => new Promise(
   }
 );
 
+/**
+ * Get all services
+ * @returns {Promise<any>}
+ */
+const getServices = () => new Promise(
+  (resolve, reject) => {
+    Service.find(
+      {},
+      (err, services) => {
+        if (err) { return reject(err); }
+        resolve(services);
+      }
+    ).populate('zoneId').populate('categoryId');
+  }
+);
+
 module.exports = {
   getCategories,
-  getZones
+  getZones,
+  getServices
 };

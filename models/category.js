@@ -1,6 +1,4 @@
 
-const commons = require('../commons');
-
 module.exports = (mongoose, options) => {
   const Schema = mongoose.Schema;
 
