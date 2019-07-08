@@ -30,7 +30,7 @@ const registerScheme = server => server.auth.scheme(
                 },
                 (err, payload) => {
                   if (err) { throw boom.unauthorized('Invalid token.'); }
-                  return h.authenticated({ credentials: {user: 'Luis'} });
+                  return h.authenticated({ credentials: {token}, artifacts: { id: payload.id } });
                 }
               );
             } else {
@@ -64,6 +64,9 @@ const authPlugin = {
   register: (server, _) => {
     registerScheme(server);
     registerStrategy(server);
+    server.auth.default({
+      strategy: 'auth-jwt'
+    });
   },
   name: 'Auth JWT'
 };

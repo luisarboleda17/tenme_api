@@ -19,7 +19,8 @@ module.exports = [
     options: {
       validate: {
         payload: newUserScheme
-      }
+      },
+      auth: false
     },
     handler: async (req, h) => {
       const userData = req.payload;
@@ -42,7 +43,8 @@ module.exports = [
     options: {
       validate: {
         payload: loginScheme
-      }
+      },
+      auth: false
     },
     handler: async (req, h) => {
       try {
@@ -69,7 +71,8 @@ module.exports = [
     options: {
       validate: {
         params: userExistenceScheme
-      }
+      },
+      auth: false
     },
     handler: async (req, h) => {
       try {
