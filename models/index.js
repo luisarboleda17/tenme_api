@@ -6,6 +6,8 @@ const modelOptions = {
   minimize: true,
   strict: true,
   timestamps: true,
+  toObject: { virtuals: true },
+  toJSON: { virtuals: true }
 };
 
 module.exports = {

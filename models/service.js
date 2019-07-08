@@ -1,11 +1,13 @@
 
+const _ = require('lodash');
+
 module.exports = (mongoose, options) => {
   const Schema = mongoose.Schema;
 
   const serviceSchema = new Schema(
     {
-      zoneId: { type: Schema.ObjectId, ref: 'zone' },
-      categoryId: { type: Schema.ObjectId, ref: 'category' },
+      zone: { type: Schema.ObjectId, ref: 'zone' },
+      category: { type: Schema.ObjectId, ref: 'category' },
       dailyHours: { type: Number, required: true },
       hourlyRate: { type: Number, required: true },
       weeklyAvailability: {
@@ -17,9 +19,10 @@ module.exports = (mongoose, options) => {
         saturday: { type: Boolean, required: true },
         sunday: { type: Boolean, required: true },
       },
-      userId: { type: Schema.ObjectId, ref: 'user', trim: true, index: true, sparse: true, },
+      user: { type: Schema.ObjectId, ref: 'user', trim: true, index: true, sparse: true, },
     },
     options
   );
+
   return mongoose.model('service', serviceSchema);
 };

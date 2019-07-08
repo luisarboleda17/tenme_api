@@ -47,7 +47,7 @@ const getServices = () => new Promise(
         if (err) { return reject(err); }
         resolve(services);
       }
-    ).populate('zoneId').populate('categoryId').populate('userId');
+    ).populate('zone').populate('category').populate('user');
   }
 );
 
@@ -60,7 +60,7 @@ const getServices = () => new Promise(
 const createService = (data, userId) => new Promise(
   async (resolve, reject) => {
     try {
-      data.userId = userId;
+      data.user = userId;
 
       let service = new Service(data);
       resolve(await service.save());

@@ -2,8 +2,8 @@
 const Joi = require('@hapi/joi');
 
 module.exports = {
-  zoneId: Joi.string().required(),
-  categoryId: Joi.string().required(),
+  zone: Joi.string().required(),
+  category: Joi.string().required(),
   dailyHours: Joi.number().required(),
   hourlyRate: Joi.number().required(),
   weeklyAvailability: {
