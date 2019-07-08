@@ -47,7 +47,12 @@ const getServices = () => new Promise(
         if (err) { return reject(err); }
         resolve(services);
       }
-    ).populate('zone').populate('category').populate('user');
+    ).populate('zone')
+      .populate('category')
+      .populate(
+        'user',
+        ['id', 'score', 'documentPhotoUrl', 'firstName', 'lastName', 'fullName']
+      );
   }
 );
 

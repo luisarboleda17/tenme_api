@@ -42,5 +42,12 @@ module.exports = (mongoose, options) => {
     },
     options
   );
+
+  userSchema.virtual('fullName').get(
+    function() {
+      return `${this.firstName} ${this.lastName}`;
+    }
+  );
+
   return mongoose.model('user', userSchema);
 };
