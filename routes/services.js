@@ -5,9 +5,10 @@ const {  } = require('../errors');
 const {
   getCategories,
   getZones,
-  getServices
+  getServices,
+  createService
 } = require('../controllers/services');
-// const newUserScheme = require('../schemes/new-user');
+const newServiceScheme = require('../schemes/new-service');
 
 module.exports = [
   {
@@ -29,6 +30,23 @@ module.exports = [
     path: '/services',
     handler: async (req, h) => {
       return h.response(await getServices()).code(200);
+    }
+  },
+  {
+    method: 'POST',
+    path: '/services',
+    options: {
+      validate: {
+        payload: newServiceScheme
+      }
+    },
+    handler: async (req, h) => {
+      try {
+        return h.response(await createService(req.payload, req.auth.artifacts.id)).code(201);
+      } catch(err) {
+        console.log(err);
+        throw boom.internal(err);
+      }
     }
   }
 ];

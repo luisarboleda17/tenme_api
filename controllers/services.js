@@ -48,12 +48,32 @@ const getServices = () => new Promise(
         if (err) { return reject(err); }
         resolve(services);
       }
-    ).populate('zoneId').populate('categoryId');
+    ).populate('zoneId').populate('categoryId').populate('userId');
+  }
+);
+
+/**
+ * Create new service
+ * @param data
+ * @param userId
+ * @returns {Promise<any>}
+ */
+const createService = (data, userId) => new Promise(
+  async (resolve, reject) => {
+    try {
+      data.userId = userId;
+
+      let service = new Service(data);
+      resolve(await service.save());
+    } catch(err) {
+      reject(err);
+    }
   }
 );
 
 module.exports = {
   getCategories,
   getZones,
-  getServices
+  getServices,
+  createService
 };

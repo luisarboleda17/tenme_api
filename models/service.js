@@ -16,7 +16,8 @@ module.exports = (mongoose, options) => {
         friday: { type: Boolean, required: true },
         saturday: { type: Boolean, required: true },
         sunday: { type: Boolean, required: true },
-      }
+      },
+      userId: { type: Schema.ObjectId, ref: 'user', trim: true, index: true, sparse: true, },
     },
     options
   );
