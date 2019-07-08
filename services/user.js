@@ -92,8 +92,40 @@ const updateLogin = (id, token) => new Promise(
   }
 );
 
+/**
+ * Add requested service to user
+ * @param userId
+ * @param serviceId
+ * @returns {Promise<any>}
+ */
+const addServiceRequest = (userId, serviceId) => new Promise(
+  (resolve, reject) => {
+    User.findByIdAndUpdate(
+      userId,
+      {
+        $push: {
+          requestedServices: serviceId
+        }
+      },
+      {
+        new: true,
+        upsert: false
+      },
+      (err, service) => {
+        if (err) { return reject(err); }
+        if (service) {
+          resolve();
+        } else {
+          reject(new USER_NOT_EXIST());
+        }
+      }
+    );
+  }
+);
+
 module.exports = {
   checkUserExist,
   getUser,
-  updateLogin
+  updateLogin,
+  addServiceRequest
 };
