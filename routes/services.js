@@ -6,9 +6,12 @@ const {
   getCategories,
   getZones,
   getServices,
-  createService
+  createService,
+  getServiceById
 } = require('../controllers/services');
 const newServiceScheme = require('../schemes/new-service');
+const requestServiceScheme = require('../schemes/request-service');
+const getServiceScheme = require('../schemes/get-service');
 
 module.exports = [
   {
@@ -43,6 +46,23 @@ module.exports = [
     handler: async (req, h) => {
       try {
         return h.response(await createService(req.payload, req.auth.artifacts.id)).code(201);
+      } catch(err) {
+        console.log(err);
+        throw boom.internal(err);
+      }
+    }
+  },
+  {
+    method: 'GET',
+    path: '/services/{id}',
+    options: {
+      validate: {
+        params: getServiceScheme
+      }
+    },
+    handler: async (req, h) => {
+      try {
+        return h.response(await getServiceById(req.params.id)).code(200);
       } catch(err) {
         console.log(err);
         throw boom.internal(err);
