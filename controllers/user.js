@@ -1,5 +1,7 @@
 
-const { user: User } = require('../models');
+
+
+const { user: User, history: History } = require('../models');
 const { USER_NOT_EXIST } = require('../errors');
 
 /**
@@ -24,6 +26,26 @@ const getUserBalance = userId => new Promise(
   }
 );
 
+/**
+ * Get user's history
+ * @param userId
+ * @returns {Promise<any>}
+ */
+const getUserHistory = userId => new Promise(
+  (resolve, reject) => {
+    History.find(
+      {
+        user: userId
+      },
+      (err, histories) => {
+        if (err) { return reject(err); }
+        resolve(histories || []);
+      }
+    ).populate('service').populate('credit');
+  }
+);
+
 module.exports = {
-  getUserBalance
+  getUserBalance,
+  getUserHistory
 };

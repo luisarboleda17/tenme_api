@@ -123,9 +123,105 @@ const addServiceRequest = (userId, serviceId) => new Promise(
   }
 );
 
+/**
+ * Add created service to user
+ * @param userId
+ * @param serviceId
+ * @returns {Promise<any>}
+ */
+const addServiceCreated = (userId, serviceId) => new Promise(
+  (resolve, reject) => {
+    User.findByIdAndUpdate(
+      userId,
+      {
+        $push: {
+          offeredServices: serviceId
+        }
+      },
+      {
+        new: true,
+        upsert: false
+      },
+      (err, service) => {
+        if (err) { return reject(err); }
+        if (service) {
+          resolve();
+        } else {
+          reject(new USER_NOT_EXIST());
+        }
+      }
+    );
+  }
+);
+
+/**
+ * Add credit id to user
+ * @param userId
+ * @param creditId
+ * @returns {Promise<any>}
+ */
+const addCreditRequest = (userId, creditId) => new Promise(
+  (resolve, reject) => {
+    User.findByIdAndUpdate(
+      userId,
+      {
+        $push: {
+          requestedCredits: creditId
+        }
+      },
+      {
+        new: true,
+        upsert: false
+      },
+      (err, user) => {
+        if (err) { return reject(err); }
+        if (user) {
+          resolve();
+        } else {
+          reject(new USER_NOT_EXIST());
+        }
+      }
+    );
+  }
+);
+
+/**
+ * Increment or decrement user balance
+ * @param userId
+ * @param amount
+ * @returns {Promise<any>}
+ */
+const incrementBalance = (userId, amount) => new Promise(
+  (resolve, reject) => {
+    User.findByIdAndUpdate(
+      userId,
+      {
+        $inc: {
+          balance: amount
+        }
+      },
+      {
+        new: true,
+        upsert: false
+      },
+      (err, user) => {
+        if (err) { return reject(err); }
+        if (user) {
+          resolve();
+        } else {
+          reject(new USER_NOT_EXIST());
+        }
+      }
+    );
+  }
+);
+
 module.exports = {
   checkUserExist,
   getUser,
   updateLogin,
-  addServiceRequest
+  addServiceRequest,
+  addCreditRequest,
+  incrementBalance,
+  addServiceCreated
 };

@@ -1,7 +1,7 @@
 
-const { category: Category, zone: Zone, service: Service, user: User } = require('../models');
+const { category: Category, zone: Zone, service: Service, user: User, history: History } = require('../models');
 const { getService } = require('../services/service');
-const { addServiceRequest } = require('../services/user');
+const { addServiceRequest, addServiceCreated } = require('../services/user');
 
 /**
  * Get all categories
@@ -68,7 +68,17 @@ const createService = (data, userId) => new Promise(
       data.user = userId;
 
       let service = new Service(data);
-      resolve(await service.save());
+      const saved = await service.save();
+
+      await addServiceCreated(userId, service.id);
+
+      await History({
+        user: userId,
+        type: 'offered_service',
+        service: service.id
+      }).save();
+
+      resolve(saved);
     } catch(err) {
       reject(err);
     }
@@ -87,7 +97,23 @@ const getServiceById = id => getService(id);
  * @param userId
  * @returns {Promise<any>}
  */
-const requestService = (id, userId) => addServiceRequest(userId, id);
+const requestService = (id, userId) => new Promise(
+  async (resolve, reject) => {
+    try {
+      const request = await addServiceRequest(userId, id);
+
+      await History({
+        user: userId,
+        type: 'requested_service',
+        service: service.id
+      }).save();
+
+      resolve(request);
+    } catch (err) {
+      reject(err);
+    }
+  }
+);
 
 module.exports = {
   getCategories,

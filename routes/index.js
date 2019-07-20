@@ -4,4 +4,5 @@ module.exports = [
   ...require('./services'),
   ...require('./user'),
   ...require('./bank'),
+  ...require('./credit'),
 ];
