@@ -3,7 +3,8 @@ const boom = require('@hapi/boom');
 
 const { USER_NOT_EXIST } = require('../errors');
 const {
-  getUserBalance
+  getUserBalance,
+  getUserHistory
 } = require('../controllers/user');
 
 module.exports = [
@@ -20,6 +21,18 @@ module.exports = [
           console.log(err);
           throw boom.internal(err);
         }
+      }
+    }
+  },
+  {
+    method: 'GET',
+    path: '/users/me/history',
+    handler: async (req, h) => {
+      try {
+        return h.response(await getUserHistory(req.auth.artifacts.id)).code(200);
+      } catch(err) {
+        console.log(err);
+        throw boom.internal(err);
       }
     }
   }

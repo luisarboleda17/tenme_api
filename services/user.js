@@ -1,6 +1,6 @@
 
 const { user: User } = require('../models');
-const { USER_NOT_EXIST } = require('../errors');
+const { USER_NOT_EXIST, BALANCE_NOT_AVAILABLE } = require('../errors');
 
 /**
  * Check if user exist on database
@@ -123,9 +123,121 @@ const addServiceRequest = (userId, serviceId) => new Promise(
   }
 );
 
+/**
+ * Add created service to user
+ * @param userId
+ * @param serviceId
+ * @returns {Promise<any>}
+ */
+const addServiceCreated = (userId, serviceId) => new Promise(
+  (resolve, reject) => {
+    User.findByIdAndUpdate(
+      userId,
+      {
+        $push: {
+          offeredServices: serviceId
+        }
+      },
+      {
+        new: true,
+        upsert: false
+      },
+      (err, service) => {
+        if (err) { return reject(err); }
+        if (service) {
+          resolve();
+        } else {
+          reject(new USER_NOT_EXIST());
+        }
+      }
+    );
+  }
+);
+
+/**
+ * Add credit id to user
+ * @param userId
+ * @param creditId
+ * @returns {Promise<any>}
+ */
+const addCreditRequest = (userId, creditId) => new Promise(
+  (resolve, reject) => {
+    User.findByIdAndUpdate(
+      userId,
+      {
+        $push: {
+          requestedCredits: creditId
+        }
+      },
+      {
+        new: true,
+        upsert: false
+      },
+      (err, user) => {
+        if (err) { return reject(err); }
+        if (user) {
+          resolve();
+        } else {
+          reject(new USER_NOT_EXIST());
+        }
+      }
+    );
+  }
+);
+
+/**
+ * Increment or decrement user balance
+ * @param userId
+ * @param amount
+ * @returns {Promise<any>}
+ */
+const incrementBalance = (userId, amount) => new Promise(
+  async (resolve, reject) => {
+
+    /**
+     * Update user balance
+     * @returns {Query}
+     */
+    const updateUser = () => User.findByIdAndUpdate(
+      userId,
+      {
+        $inc: {
+          balance: amount
+        }
+      },
+      {
+        new: true,
+        upsert: false
+      },
+      (err, user) => {
+        if (err) { return reject(err); }
+        if (user) {
+          resolve();
+        } else {
+          reject(new USER_NOT_EXIST());
+        }
+      }
+    );
+
+    if (amount < 0) {
+      const user = await getUser({_id: userId});
+      if (user.balance >= (amount > 0 ? amount : -1 * amount)) {
+        updateUser();
+      } else {
+        reject(new BALANCE_NOT_AVAILABLE());
+      }
+    } else {
+      updateUser();
+    }
+  }
+);
+
 module.exports = {
   checkUserExist,
   getUser,
   updateLogin,
-  addServiceRequest
+  addServiceRequest,
+  addCreditRequest,
+  incrementBalance,
+  addServiceCreated
 };

@@ -1,7 +1,7 @@
 
 const boom = require('@hapi/boom');
 
-const {  } = require('../errors');
+const { BALANCE_NOT_AVAILABLE } = require('../errors');
 const {
   getCategories,
   getZones,
@@ -13,6 +13,7 @@ const {
 const newServiceScheme = require('../schemes/new-service');
 const requestServiceScheme = require('../schemes/request-service');
 const getServiceScheme = require('../schemes/get-service');
+const requestServiceBodySceheme = require('../schemes/request-service-body');
 
 module.exports = [
   {
@@ -75,15 +76,26 @@ module.exports = [
     path: '/services/{id}/request',
     options: {
       validate: {
-        params: requestServiceScheme
+        params: requestServiceScheme,
+        payload: requestServiceBodySceheme
       }
     },
     handler: async (req, h) => {
       try {
-        return h.response(await requestService(req.params.id, req.auth.artifacts.id)).code(200);
+        return h.response(await requestService(
+          req.params.id,
+          req.auth.artifacts.id,
+          req.payload.dailyHours,
+          req.payload.hourlyRate,
+          req.payload.days
+        )).code(200);
       } catch(err) {
-        console.log(err);
-        throw boom.internal(err);
+        if (err instanceof BALANCE_NOT_AVAILABLE) {
+          throw boom.badRequest(err);
+        } else {
+          console.log(err);
+          throw boom.internal(err);
+        }
       }
     }
   }
