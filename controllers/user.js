@@ -41,7 +41,10 @@ const getUserHistory = userId => new Promise(
         if (err) { return reject(err); }
         resolve(histories || []);
       }
-    ).populate('service').populate('credit');
+    ).populate({
+      path: 'service',
+      populate: { path: 'zone' }
+    }).populate('credit');
   }
 );
 

@@ -26,7 +26,7 @@ module.exports = [
   },
   {
     method: 'GET',
-    path: '/users/history',
+    path: '/users/me/history',
     handler: async (req, h) => {
       try {
         return h.response(await getUserHistory(req.auth.artifacts.id)).code(200);

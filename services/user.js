@@ -1,6 +1,6 @@
 
 const { user: User } = require('../models');
-const { USER_NOT_EXIST } = require('../errors');
+const { USER_NOT_EXIST, BALANCE_NOT_AVAILABLE } = require('../errors');
 
 /**
  * Check if user exist on database
@@ -192,8 +192,13 @@ const addCreditRequest = (userId, creditId) => new Promise(
  * @returns {Promise<any>}
  */
 const incrementBalance = (userId, amount) => new Promise(
-  (resolve, reject) => {
-    User.findByIdAndUpdate(
+  async (resolve, reject) => {
+
+    /**
+     * Update user balance
+     * @returns {Query}
+     */
+    const updateUser = () => User.findByIdAndUpdate(
       userId,
       {
         $inc: {
@@ -213,6 +218,17 @@ const incrementBalance = (userId, amount) => new Promise(
         }
       }
     );
+
+    if (amount < 0) {
+      const user = await getUser({_id: userId});
+      if (user.balance >= (amount > 0 ? amount : -1 * amount)) {
+        updateUser();
+      } else {
+        reject(new BALANCE_NOT_AVAILABLE());
+      }
+    } else {
+      updateUser();
+    }
   }
 );
 
