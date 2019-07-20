@@ -1,7 +1,7 @@
 
 const jwt = require('jsonwebtoken');
 
-const { APP_NAME, DEFAULT_TOKEN_KEY, DEFAULT_TOKEN_EXPIRATION } = require('../commons');
+const { APP_NAME, DEFAULT_SIGN_TOKEN_KEY } = require('../commons');
 
 
 /**
@@ -16,14 +16,13 @@ const createToken = (user) => new Promise(
     };
     const options = {
       algorithm: 'HS256',
-      expiresIn: DEFAULT_TOKEN_EXPIRATION,
       audience: APP_NAME,
       issuer: APP_NAME,
     };
 
     jwt.sign(
       payload,
-      DEFAULT_TOKEN_KEY,
+      DEFAULT_SIGN_TOKEN_KEY,
       options,
       (err, token) => {
         if (err) { return reject(err); }
