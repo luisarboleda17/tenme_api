@@ -232,6 +232,33 @@ const incrementBalance = (userId, amount) => new Promise(
   }
 );
 
+/**
+ * Update user with new data
+ * @param userId
+ * @param newData
+ * @returns {Promise<any>}
+ */
+const updateUser = (userId, newData) => new Promise(
+  (resolve, reject) => {
+    User.findByIdAndUpdate(
+      userId,
+      newData,
+      {
+        new: true,
+        upsert: false
+      },
+      (err, user) => {
+        if (err) { return reject(err); }
+        if (user) {
+          resolve(user);
+        } else {
+          reject(new USER_NOT_EXIST());
+        }
+      }
+    );
+  }
+);
+
 module.exports = {
   checkUserExist,
   getUser,
@@ -239,5 +266,6 @@ module.exports = {
   addServiceRequest,
   addCreditRequest,
   incrementBalance,
-  addServiceCreated
+  addServiceCreated,
+  updateUser
 };

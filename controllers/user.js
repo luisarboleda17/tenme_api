@@ -3,6 +3,7 @@
 
 const { user: User, history: History } = require('../models');
 const { USER_NOT_EXIST } = require('../errors');
+const { updateUser } = require('../services/user');
 
 /**
  * Get user's balance
@@ -48,7 +49,16 @@ const getUserHistory = userId => new Promise(
   }
 );
 
+/**
+ * Update user information
+ * @param userId
+ * @param newData
+ * @returns {Promise<any>|*}
+ */
+const updateUserInfo = (userId, newData) => updateUser(userId, newData);
+
 module.exports = {
   getUserBalance,
-  getUserHistory
+  getUserHistory,
+  updateUserInfo
 };
