@@ -63,3 +63,8 @@ typings/
 .idea/
 
 .DS_Store
+
+.env.dev
+.env.prod
+private.key
+public.key
