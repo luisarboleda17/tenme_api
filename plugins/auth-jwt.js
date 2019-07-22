@@ -24,7 +24,7 @@ const registerScheme = server => server.auth.scheme(
                 token,
                 options.key,
                 {
-                  algorithms: ['HS256'],
+                  algorithms: ['RS256'],
                   audience: server.settings.app.name,
                   issuer: server.settings.app.name,
                 },

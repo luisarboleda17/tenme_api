@@ -15,7 +15,7 @@ const createToken = (user) => new Promise(
       id: user.id,
     };
     const options = {
-      algorithm: 'HS256',
+      algorithm: 'RS256',
       audience: APP_NAME,
       issuer: APP_NAME,
     };
