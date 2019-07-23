@@ -2,24 +2,29 @@
 
 require('dotenv').config({path: `./.env.${process.env.ENV || 'dev'}`});
 
-const app = require('./app');
+const Mongoose = require('mongoose');
+const createApp = require('./app');
 
 const startServer = async () => {
   try {
-      await app.start();
-      console.log(`Server up in ${app.info.uri}`);
-  }   catch (error) {
-      console.log(`Error starting server: ${error}`);
+    await Mongoose.connect(
+      process.env.DB_URI,
+      {
+        useNewUrlParser: true,
+        useFindAndModify: false,
+        useCreateIndex: true,
+      }
+    );
+
+    const app = await createApp();
+    await app.start();
+    console.info(`${app.settings.app.name} app is up.`);
+    console.info(`Environment: ${app.settings.app.env}`);
+    console.info(`URL: ${app.info.uri}`);
+  } catch (error) {
+    console.log(`Error starting server: ${error}`);
+    process.exit(1);
   }
 };
 
-require('./bootstrap')().then(
-  () => {
-    startServer();
-  }
-).catch(
-  err => {
-    console.log(err);
-    process.exit(1);
-  }
-);
+startServer();

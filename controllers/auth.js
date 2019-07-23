@@ -1,93 +1,105 @@
 
-const axios = require('axios');
-
-const {
-    BASE_UTP_URL,
-    DEFAULT_HEADERS,
-    DEFAULT_COOKIES,
-    DEFAULT_BODY,
-} = require('../commons');
-const {
-    getCookieValue,
-    parseCookies,
-    parseRawBody,
-} = require('../utils');
+const { user: User } = require('../models');
+const { password: { encryptPassword, comparePassword }, auth: { createToken } } = require('../utils');
+const { checkUserExist, getUser, updateLogin } = require('../services/user');
+const { USER_EXIST, WRONG_PASSWORD } = require('../errors');
 
 /**
- * Get session data from main acceso.aspx url
- * @returns {Promise<*>}
+ * Login using facebook credentials
+ * @param facebookId
+ * @returns {Promise<any>}
  */
-const getSession = async () => {
+const loginWithFacebook = (facebookId) => new Promise(
+  async (resolve, reject) => {
     try {
-        const request = await axios.get(
-            `${BASE_UTP_URL}acceso.aspx`,
-            {
-                headers: {
-                    ...DEFAULT_HEADERS,
-                },
-                validateStatus: status => status === 200 || status === 500,
-            },
-        );
-        return getCookieValue(request.headers['set-cookie'], 'ASP.NET_SessionId');
-    } catch (error) {
-        return null;
+      let user = await getUser({ facebookId });
+      const token = await createToken(user);
+
+      user = await updateLogin(user.id, token);
+      resolve({
+        token,
+        user,
+      });
+    } catch(err) {
+      console.error(err);
+      reject(err);
     }
-};
+  }
+);
 
 /**
- * Get Login cookie from acceso.aspx
- * @param id
+ * Login with credentials
+ * @param phone
  * @param password
- * @param session_id
- * @returns {Promise<*>}
+ * @returns {Promise<any>}
  */
-const getLogin = async (id, password, session_id) => {
+const loginWithCredentials = (phone, password) => new Promise(
+  async (resolve, reject) => {
     try {
-        const request = await axios.post(
-            `${BASE_UTP_URL}acceso.aspx`,
-            parseRawBody({
-                ...DEFAULT_BODY,
-                txtCedula: id.toString(),
-                txtClave: password.toString(),
-                'imgbEnviar.x': 77,
-                'imgbEnviar.y': 15
-            }),
-            {
-                headers: {
-                    ...DEFAULT_HEADERS,
-                    'Cookie': parseCookies({
-                        ...DEFAULT_COOKIES,
-                        'ASP.NET_SessionId': session_id,
-                    }),
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'Origin': 'http://matricula.utp.ac.pa',
-                    'Referer': 'http://matricula.utp.ac.pa/acceso.aspx',
-                    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36',
-                    'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36',
-                },
-                validateStatus: status => status === 200 || status === 302,
-            }
-        );
-        console.log(request);
-        return request.data;
-    } catch (error) {
-        console.log(error);
-        return null;
+      let user = await getUser({ completePhone: phone });
+
+      if (await comparePassword(password, user.password)) {
+        const token = await createToken(user);
+        user = await updateLogin(user.id, token);
+        resolve({
+          token,
+          user,
+        });
+      } else {
+        reject(new WRONG_PASSWORD());
+      }
+    } catch(err) {
+      console.error(err);
+      reject(err);
     }
-};
+  }
+);
+
+/**
+ * Sign up user to database
+ * @param data
+ * @returns {Promise<any>}
+ */
+const signUp = data => new Promise(
+  async (resolve, reject) => {
+    try {
+      const completePhone = parseInt(data.phone.countryCode.toString() + data.phone.phoneNumber.toString(), 10);
+
+      if (!(await checkUserExist(completePhone, data.facebookId))) {
+        if (data.password) {
+          data.password = await encryptPassword(data.password);
+        }
+        data.completePhone = completePhone;
+
+        let newUser = new User(data);
+        await newUser.save();
+
+        const token = await createToken(newUser);
+        newUser = await updateLogin(newUser.id, token);
+        resolve({
+          token,
+          user: newUser,
+        });
+      } else {
+        reject(new USER_EXIST());
+      }
+    } catch(err) {
+      console.error(err);
+      reject(err);
+    }
+  }
+);
+
+/**
+ * Check if user exist on platform with provided phone number
+ * @param phone
+ * @returns {Promise<any>}
+ */
+const checkUserExistence = phone => checkUserExist(phone);
 
 module.exports = {
-    login: async (id, password) => {
-        const session_id = await getSession();
-        return await getLogin(id, password, session_id);
-    },
+  loginWithCredentials,
+  loginWithFacebook,
+  signUp,
+  checkUserExistence
 };
-
-
-/*
-
-'InfoEst=redirect=26EA2AC3%2AEC91%2A47CB%2A825E%2ABC3F5CD87583; path=/',
-     'ST=%2Af; path=/',
-     'Login=par2=H3K%2A%40%40dWdd%7Eq%40%7Edf%40hfdD%24XU&par3=%7E%5Ehfd%5EdWdd&par1=Wh%5E%24%24%5EW%7E%5E%24W%5E%24X%5E%24q; path=/' ],
-
- */
