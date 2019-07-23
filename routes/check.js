@@ -8,7 +8,7 @@ module.exports = [
     },
     handler: async (req, h) => {
       return h.response({
-        status: 'Tenme API'
+        name: 'Tenme API'
       }).code(200);
     }
   }

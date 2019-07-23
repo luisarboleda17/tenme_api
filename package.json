@@ -1,10 +1,10 @@
 {
   "name": "api",
   "version": "1.0.0",
-  "description": "",
+  "description": "Tenme API",
   "main": "index.js",
   "scripts": {
-    "start": "ENV=prod node index.js",
+    "start": "node index.js",
     "local": "nodemon index.js"
   },
   "repository": {
@@ -12,7 +12,7 @@
     "url": "git+https://github.com/luisarboleda17/tenme_api.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "Luis Arboleda",
   "license": "Apache License 1.1",
   "bugs": {
     "url": "https://github.com/luisarboleda17/tenme_api/issues"
