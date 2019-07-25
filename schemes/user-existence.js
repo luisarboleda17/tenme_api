@@ -1,6 +1,7 @@
 
 const Joi = require('@hapi/joi');
 
-module.exports = {
-  phone: Joi.number().required()
-};
+module.exports = Joi.object({
+  phone: Joi.number(),
+  facebookId: Joi.string()
+}).min(1);

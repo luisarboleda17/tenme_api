@@ -67,16 +67,18 @@ module.exports = [
   },
   {
     method: 'GET',
-    path: '/auth/user/{phone}',
+    path: '/auth/check',
     options: {
       validate: {
-        params: userExistenceScheme
+        query: userExistenceScheme
       },
       auth: false
     },
     handler: async (req, h) => {
       try {
-        return h.response({ exist: await checkUserExistence(req.params.phone) }).code(200);
+        return h.response({
+          exist: await checkUserExistence(req.query.phone, req.query.facebookId)
+        }).code(200);
       } catch(err) {
         console.log(err);
         throw boom.internal(err);

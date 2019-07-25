@@ -10,13 +10,16 @@ const { USER_NOT_EXIST, BALANCE_NOT_AVAILABLE } = require('../errors');
  */
 const checkUserExist = (completePhone, facebookId) => new Promise(
   (resolve, reject) => {
-    const queryParams = {
-      $or: [
-        { completePhone: completePhone },
-      ]
-    };
+    const queryParams = { $or: [] };
+    if (completePhone) {
+      queryParams.$or.push({ completePhone: completePhone });
+    }
     if (facebookId) {
       queryParams.$or.push({ facebookId: facebookId });
+    }
+
+    if (queryParams.$or.length < 0) {
+      return reject();
     }
 
     User.findOne(
