@@ -34,19 +34,36 @@ const getUserBalance = userId => new Promise(
  * @returns {Promise<any>}
  */
 const getUserHistory = userId => new Promise(
-  (resolve, reject) => {
-    History.find(
-      {
-        user: userId
-      },
-      (err, histories) => {
-        if (err) { return reject(err); }
-        resolve(histories || []);
-      }
-    ).populate({
-      path: 'service',
-      populate: { path: 'zone' }
-    }).populate('credit');
+  async (resolve, reject) => {
+    try {
+      const user = await getUser({_id: userId});
+
+      History.find(
+        {
+          $or: [
+            { user: userId },
+            {
+              service: {
+                $in: user.offeredServices
+              }
+            }
+          ]
+        },
+        (err, histories) => {
+          if (err) { return reject(err); }
+          resolve(histories || []);
+        }
+      ).populate({
+        path: 'service',
+        populate: [
+          { path: 'zone' },
+          { path: 'category' },
+          { path: 'user', select: 'id firstName lastName' }
+        ]
+      }).populate('credit');
+    } catch (err) {
+      reject(err);
+    }
   }
 );
 
