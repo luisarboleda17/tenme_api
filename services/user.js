@@ -10,13 +10,16 @@ const { USER_NOT_EXIST, BALANCE_NOT_AVAILABLE } = require('../errors');
  */
 const checkUserExist = (completePhone, facebookId) => new Promise(
   (resolve, reject) => {
-    const queryParams = {
-      $or: [
-        { completePhone: completePhone },
-      ]
-    };
+    const queryParams = { $or: [] };
+    if (completePhone) {
+      queryParams.$or.push({ completePhone: completePhone });
+    }
     if (facebookId) {
       queryParams.$or.push({ facebookId: facebookId });
+    }
+
+    if (queryParams.$or.length < 0) {
+      return reject();
     }
 
     User.findOne(
@@ -65,10 +68,8 @@ const getUser = (params) => new Promise(
  */
 const updateLogin = (id, token) => new Promise(
   (resolve, reject) => {
-    User.findOneAndUpdate(
-      {
-        _id: id,
-      },
+    User.findByIdAndUpdate(
+      id,
       {
         accessToken: token,
         registeredAt: new Date().getTime()
@@ -76,6 +77,7 @@ const updateLogin = (id, token) => new Promise(
       {
         new: true,
         upsert: false,
+        select: '-password -offeredServices -requestedServices -requestedCredits'
       },
       (err, user) => {
         if (err) {

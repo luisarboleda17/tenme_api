@@ -1,7 +1,7 @@
 
 const boom = require('@hapi/boom');
 
-const { USER_NOT_EXIST } = require('../errors');
+const { USER_NOT_EXIST, WRONG_PASSWORD } = require('../errors');
 const {
   getUserBalance,
   getUserHistory,
@@ -40,6 +40,8 @@ module.exports = [
       } catch(err) {
         if (err instanceof USER_NOT_EXIST) {
           throw boom.notFound(err);
+        } else if (err instanceof WRONG_PASSWORD) {
+          throw boom.forbidden(err);
         } else {
           console.log(err);
           throw boom.internal(err);

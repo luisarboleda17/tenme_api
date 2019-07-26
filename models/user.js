@@ -33,7 +33,7 @@ module.exports = (mongoose, options) => {
         number: { type: Number, required: true }
       },
       apcAllowed: { type: Boolean, required: true },
-      facebookId: { type: Number, required: false, index: true },
+      facebookId: { type: String, required: false, index: true },
       documentPhotoUrl: { type: String, required: true },
       registeredAt: { type: Date, default: Date.now, required: true },
       offeredServices: [{ type: Schema.ObjectId }], // TODO: Add service reference

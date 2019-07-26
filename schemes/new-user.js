@@ -21,7 +21,7 @@ module.exports = {
     number: Joi.number().required()
   }).required(),
   apcAllowed: Joi.boolean().required(),
-  facebookId: Joi.number(),
+  facebookId: Joi.string(),
   documentPhotoUrl: Joi.string().required(),
   password: Joi.string().min(8).max(16).when('facebookId', { is: Joi.exist(), then: Joi.optional(), otherwise: Joi.required() })
 };

@@ -93,9 +93,10 @@ const signUp = data => new Promise(
 /**
  * Check if user exist on platform with provided phone number
  * @param phone
+ * @param facebookId
  * @returns {Promise<any>}
  */
-const checkUserExistence = phone => checkUserExist(phone);
+const checkUserExistence = (phone, facebookId) => checkUserExist(phone, facebookId);
 
 module.exports = {
   loginWithCredentials,
