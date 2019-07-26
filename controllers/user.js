@@ -1,9 +1,10 @@
 
-
+const _ = require('lodash');
 
 const { user: User, history: History } = require('../models');
-const { USER_NOT_EXIST } = require('../errors');
-const { updateUser } = require('../services/user');
+const { USER_NOT_EXIST, WRONG_PASSWORD } = require('../errors');
+const { updateUser, getUser } = require('../services/user');
+const { encryptPassword, comparePassword } = require('../utils/password');
 
 /**
  * Get user's balance
@@ -55,7 +56,28 @@ const getUserHistory = userId => new Promise(
  * @param newData
  * @returns {Promise<any>|*}
  */
-const updateUserInfo = (userId, newData) => updateUser(userId, newData);
+const updateUserInfo = (userId, newData) => new Promise(
+  async (resolve, reject) => {
+    try {
+      if (newData.password) {
+        const user = await getUser({_id: userId});
+
+        if (await comparePassword(newData.password.old, user.password)) {
+          newData.password = await encryptPassword(newData.password.new);
+          const user = await updateUser(userId, newData);
+          resolve(_.pick(user, ['firstName', 'lastName', 'email']));
+        } else {
+          reject(new WRONG_PASSWORD());
+        }
+      } else {
+        const user = await updateUser(userId, newData);
+        resolve(_.pick(user, ['firstName', 'lastName', 'email']));
+      }
+    } catch (err) {
+      reject(err);
+    }
+  }
+);
 
 module.exports = {
   getUserBalance,

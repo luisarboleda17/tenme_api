@@ -68,10 +68,8 @@ const getUser = (params) => new Promise(
  */
 const updateLogin = (id, token) => new Promise(
   (resolve, reject) => {
-    User.findOneAndUpdate(
-      {
-        _id: id,
-      },
+    User.findByIdAndUpdate(
+      id,
       {
         accessToken: token,
         registeredAt: new Date().getTime()
@@ -79,6 +77,7 @@ const updateLogin = (id, token) => new Promise(
       {
         new: true,
         upsert: false,
+        select: '-password -offeredServices -requestedServices -requestedCredits'
       },
       (err, user) => {
         if (err) {
