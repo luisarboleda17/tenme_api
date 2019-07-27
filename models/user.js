@@ -27,18 +27,14 @@ module.exports = (mongoose, options) => {
       },
       email: { type: String, required: false, trim: true },
       emailValid: { type: Boolean, default: true, required: true }, // TODO: Add email validation
-      bankInfo: {
-        bankId: { type: String, required: true },
-        accountType: { type: String, required: true, enum: [commons.ACCOUNT_TYPES.SAVING, commons.ACCOUNT_TYPES.CHECKING]},
-        number: { type: Number, required: true }
-      },
       apcAllowed: { type: Boolean, required: true },
       facebookId: { type: String, required: false, index: true },
       documentPhotoUrl: { type: String, required: true },
       registeredAt: { type: Date, default: Date.now, required: true },
-      offeredServices: [{ type: Schema.ObjectId }], // TODO: Add service reference
-      requestedServices: [{ type: Schema.ObjectId }], // TODO: Add service reference
-      requestedCredits: [{ type: Schema.ObjectId }] // TODO: Add credit reference
+      offeredServices: [{ type: Schema.ObjectId, ref: 'service' }],
+      requestedServices: [{ type: Schema.ObjectId, ref: 'service' }],
+      requestedCredits: [{ type: Schema.ObjectId, ref: 'credit' }],
+      paymentMethods: [{ type: Schema.ObjectId, ref: 'paymentMethod' }]
     },
     options
   );
