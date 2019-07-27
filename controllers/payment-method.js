@@ -1,6 +1,6 @@
 
 const { paymentMethod: PaymentMethod } = require('../models');
-const { addPaymentMethodUser } = require('../services/user');
+const { addPaymentMethod: addPaymentMethodUser } = require('../services/user');
 
 /**
  * Get payment methos of user
@@ -38,9 +38,9 @@ const addPaymentMethod = (data, userId) => new Promise(
       const method = new PaymentMethod(data);
       const methodSave = await method.save();
 
-      await addPaymentMethodUser(method.id);
+      await addPaymentMethodUser(userId, method.id);
 
-      resolve(methodSave);
+      resolve();
     } catch(err) {
       console.error(err);
       reject(err);

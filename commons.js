@@ -25,8 +25,8 @@ module.exports = {
   PASSWORD_SALT_ROUNDS: 10,
   DEFAULT_SIGN_TOKEN_KEY: PRIVATE_KEY ? PRIVATE_KEY : 'tenme',
   DEFAULT_VERIFY_TOKEN_KEY: PUBLIC_KEY ? PUBLIC_KEY : 'tenme',
-  PAYMENT_METHODS_TYPES: [
-    'card',
-    'account'
-  ]
+  PAYMENT_METHODS_TYPES: {
+    CARD: 'card',
+    ACCOUNT: 'account'
+  }
 };
