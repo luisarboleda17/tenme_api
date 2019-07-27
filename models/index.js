@@ -17,5 +17,6 @@ module.exports = {
   service: require('./service')(Mongoose, modelOptions),
   bank: require('./bank')(Mongoose, modelOptions),
   credit: require('./credit')(Mongoose, modelOptions),
-  history: require('./history')(Mongoose, modelOptions)
+  history: require('./history')(Mongoose, modelOptions),
+  paymentMethod: require('./payment-method')(Mongoose, modelOptions)
 };
