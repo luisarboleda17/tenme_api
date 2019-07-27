@@ -5,5 +5,6 @@ module.exports = [
   ...require('./user'),
   ...require('./bank'),
   ...require('./credit'),
-  ...require('./check')
+  ...require('./check'),
+  ...require('./payment-method')
 ];

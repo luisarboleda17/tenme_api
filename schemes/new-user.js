@@ -15,11 +15,6 @@ module.exports = {
     phoneNumber: Joi.number().required()
   }).required(),
   email: Joi.string().email({ minDomainSegments: 2 }),
-  bankInfo: Joi.object({
-    bankId: Joi.string().required(),
-    accountType: Joi.string().valid('saving','checking').required(),
-    number: Joi.number().required()
-  }).required(),
   apcAllowed: Joi.boolean().required(),
   facebookId: Joi.string(),
   documentPhotoUrl: Joi.string().required(),
