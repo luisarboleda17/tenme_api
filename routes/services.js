@@ -85,9 +85,7 @@ module.exports = [
         return h.response(await requestService(
           req.params.id,
           req.auth.artifacts.id,
-          req.payload.dailyHours,
-          req.payload.hourlyRate,
-          req.payload.days
+          req.payload
         )).code(200);
       } catch(err) {
         if (err instanceof BALANCE_NOT_AVAILABLE) {

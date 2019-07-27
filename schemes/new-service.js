@@ -2,7 +2,7 @@
 const Joi = require('@hapi/joi');
 
 const dayScheme = Joi.array().items(Joi.object({
-  startHour: Joi.number.required(),
+  startHour: Joi.number().required(),
   endHour: Joi.number().required()
 })).required();
 

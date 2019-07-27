@@ -1,5 +1,5 @@
 
-const { category: Category, zone: Zone, service: Service, user: User, history: History } = require('../models');
+const { category: Category, zone: Zone, service: Service, user: User, history: History, serviceRequest: ServiceRequest } = require('../models');
 const { getService } = require('../services/service');
 const { addServiceRequest, addServiceCreated, incrementBalance } = require('../services/user');
 
@@ -95,17 +95,33 @@ const getServiceById = id => getService(id);
  * Request service
  * @param id
  * @param userId
- * @param dailyHours
- * @param hourlyRate
- * @param days
+ * @param requiredDays
  * @returns {Promise<any>}
  */
-const requestService = (id, userId, dailyHours, hourlyRate, days) => new Promise(
+const requestService = (id, userId, requiredDays) => new Promise(
   async (resolve, reject) => {
     try {
-      const request = await addServiceRequest(userId, id);
+      const totalHours = requiredDays.reduce(
+        (prev, hourRange) => {
+          return prev + Math.ceil((hourRange.endHour - hourRange.startHour) / 3600000)
+        },
+        0
+      );
+      const service = await getService(id);
+      const totalPrice = service.hourlyRate * totalHours;
 
-      await incrementBalance(userId, -1 * (dailyHours * hourlyRate * days));
+      const serviceRequest = new ServiceRequest({
+        service: id,
+        requestedDays: requiredDays,
+        hours: totalHours,
+        totalPrice,
+        user: userId
+      });
+
+      await serviceRequest.save();
+      await addServiceRequest(userId, id);
+
+      await incrementBalance(userId, -1 * totalPrice);
 
       await History({
         user: userId,
@@ -113,7 +129,7 @@ const requestService = (id, userId, dailyHours, hourlyRate, days) => new Promise
         service: id
       }).save();
 
-      resolve(request);
+      resolve();
     } catch (err) {
       reject(err);
     }
