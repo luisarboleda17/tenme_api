@@ -5,7 +5,7 @@ module.exports = (mongoose, options) => {
   const Schema = mongoose.Schema;
 
   const dayScheme = [{
-    startHour: { type: Number, required: true }
+    startHour: { type: Number, required: true },
     endHour: { type: Number, required: true }
   }];
 
@@ -13,7 +13,6 @@ module.exports = (mongoose, options) => {
     {
       zone: { type: Schema.ObjectId, ref: 'zone' },
       category: { type: Schema.ObjectId, ref: 'category' },
-      dailyHours: { type: Number, required: true },
       hourlyRate: { type: Number, required: true },
       weeklyAvailability: {
         monday: dayScheme,
