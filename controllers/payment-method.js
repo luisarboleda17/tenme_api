@@ -1,6 +1,7 @@
 
 const { paymentMethod: PaymentMethod } = require('../models');
 const { addPaymentMethod: addPaymentMethodUser } = require('../services/user');
+const { PAYMENT_METHODS_TYPES } = require('../commons');
 
 /**
  * Get payment methos of user
@@ -16,7 +17,7 @@ const getPaymentMethods = (userId) => new Promise(
           if (err) return reject(err);
           resolve(methods || []);
         }
-      );
+      ).populate('bank', 'name');
     } catch(err) {
       console.error(err);
       reject(err);
@@ -34,9 +35,13 @@ const addPaymentMethod = (data, userId) => new Promise(
   async (resolve, reject) => {
     try {
       data.user = userId;
+      
+      if (data.type === PAYMENT_METHODS_TYPES.CARD) {
+        data.cardLast4 = parseInt(data.cardNumber.toString().substr(-4), 10);
+      }
 
       const method = new PaymentMethod(data);
-      const methodSave = await method.save();
+      await method.save();
 
       await addPaymentMethodUser(userId, method.id);
 

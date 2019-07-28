@@ -22,5 +22,7 @@ module.exports = (mongoose, options) => {
     options
   );
 
+  paymentMethodsSchema.virtual('bank', { ref: 'bank', localField: 'bankId', foreignField: '_id', justOne: true });
+
   return mongoose.model('paymentMethod', paymentMethodsSchema);
 };
