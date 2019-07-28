@@ -6,10 +6,12 @@ module.exports = (mongoose, options) => {
     {
       user: { type: Schema.ObjectId, ref: 'user', required: true },
       amount: { type: Number, required: true },
-      paymentMethod: { type: String, required: true, enum: ['bank_account', 'services'] },
+      paymentMethod: { type: Schema.ObjectId, ref: 'paymentMethod' },
       interestRate: { type: Number, required: true },
       firstPaymentDate: { type: Date, required: true },
+      payWithService: { type: Boolean },
       approved: { type: Boolean, required: true },
+      isCredit: { type: Boolean, required: true },
     },
     options
   );
