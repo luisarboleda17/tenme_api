@@ -34,7 +34,7 @@ module.exports = [
     method: 'GET',
     path: '/services',
     handler: async (req, h) => {
-      return h.response(await getServices()).code(200);
+      return h.response(await getServices(req.auth.artifacts.id)).code(200);
     }
   },
   {
@@ -85,7 +85,7 @@ module.exports = [
         return h.response(await requestService(
           req.params.id,
           req.auth.artifacts.id,
-          req.payload
+          req.payload.totalHours
         )).code(200);
       } catch(err) {
         if (err instanceof BALANCE_NOT_AVAILABLE) {

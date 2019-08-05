@@ -8,8 +8,8 @@ module.exports = (mongoose, options) => {
     {
       accessToken: { type: String, trim: true, index: true, unique: true, sparse: true, select: false },
       password: { type: String, required: false },
-      balance: { type: Number, required: true, default: 0 },
-      score: { type: Number, required: true, default: 5 }, // TODO: Add valid initial user score
+      balance: { type: Number, required: true, default: Math.floor((Math.random() * 20) + 1) },
+      score: { type: Number, required: true, default: Math.floor((Math.random() * 5) + 1) }, // TODO: Add valid initial user score
       status: { type: Number, required: true, default: 0 }, // TODO: Define status
       firstName: { type: String, required: true, minlength: 3, maxlength: 30, trim: true },
       middleName: { type: String, required: false, minlength: 3, maxlength: 30, trim: true },

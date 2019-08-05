@@ -37,12 +37,15 @@ const getZones = () => new Promise(
 
 /**
  * Get all services
+ * @param userId
  * @returns {Promise<any>}
  */
-const getServices = () => new Promise(
+const getServices = (userId) => new Promise(
   (resolve, reject) => {
     Service.find(
-      {},
+      {
+        user: { $ne: userId }
+      },
       (err, services) => {
         if (err) { return reject(err); }
         resolve(services);
@@ -95,24 +98,17 @@ const getServiceById = id => getService(id);
  * Request service
  * @param id
  * @param userId
- * @param requiredDays
+ * @param totalHours
  * @returns {Promise<any>}
  */
-const requestService = (id, userId, requiredDays) => new Promise(
+const requestService = (id, userId, totalHours) => new Promise(
   async (resolve, reject) => {
     try {
-      const totalHours = requiredDays.reduce(
-        (prev, hourRange) => {
-          return prev + Math.ceil((hourRange.endHour - hourRange.startHour) / 3600000)
-        },
-        0
-      );
       const service = await getService(id);
       const totalPrice = service.hourlyRate * totalHours;
 
       const serviceRequest = new ServiceRequest({
         service: id,
-        requestedDays: requiredDays,
         hours: totalHours,
         totalPrice,
         user: userId

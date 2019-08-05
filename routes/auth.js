@@ -18,7 +18,16 @@ module.exports = [
     path: '/auth/signup',
     options: {
       validate: {
-        payload: newUserScheme
+        payload: newUserScheme,
+        failAction: async (request, h, err) => {
+          if (process.env.ENV === 'prod') {
+            console.error('ValidationError:', err.message);
+            throw Boom.badRequest(`Invalid request payload input`);
+          } else {
+            console.error(err);
+            throw err;
+          }
+        }
       },
       auth: false
     },
