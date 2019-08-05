@@ -61,6 +61,30 @@ const getUser = (params) => new Promise(
 );
 
 /**
+ * Get user by id
+ * @param id
+ * @returns {Promise<any>}
+ */
+const getUserById = (id) => new Promise(
+  (resolve, reject) => {
+    User.findById(
+      id,
+      (err, user) => {
+        if (err) {
+          reject(err);
+        } else {
+          if (user) {
+            resolve(user);
+          } else {
+            reject(new USER_NOT_EXIST());
+          }
+        }
+      }
+    );
+  }
+);
+
+/**
  * Update user token and registered date
  * @param id
  * @param token
@@ -188,6 +212,37 @@ const addCreditRequest = (userId, creditId) => new Promise(
 );
 
 /**
+ * Add credit id to user
+ * @param userId
+ * @param methodId
+ * @returns {Promise<any>}
+ */
+const addPaymentMethod = (userId, methodId) => new Promise(
+  (resolve, reject) => {
+    User.findByIdAndUpdate(
+      userId,
+      {
+        $push: {
+          paymentMethods: methodId
+        }
+      },
+      {
+        new: true,
+        upsert: false
+      },
+      (err, user) => {
+        if (err) { return reject(err); }
+        if (user) {
+          resolve();
+        } else {
+          reject(new USER_NOT_EXIST());
+        }
+      }
+    );
+  }
+);
+
+/**
  * Increment or decrement user balance
  * @param userId
  * @param amount
@@ -269,5 +324,7 @@ module.exports = {
   addCreditRequest,
   incrementBalance,
   addServiceCreated,
-  updateUser
+  updateUser,
+  getUserById,
+  addPaymentMethod
 };

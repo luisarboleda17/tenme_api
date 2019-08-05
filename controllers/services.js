@@ -1,5 +1,5 @@
 
-const { category: Category, zone: Zone, service: Service, user: User, history: History } = require('../models');
+const { category: Category, zone: Zone, service: Service, user: User, history: History, serviceRequest: ServiceRequest } = require('../models');
 const { getService } = require('../services/service');
 const { addServiceRequest, addServiceCreated, incrementBalance } = require('../services/user');
 
@@ -37,12 +37,15 @@ const getZones = () => new Promise(
 
 /**
  * Get all services
+ * @param userId
  * @returns {Promise<any>}
  */
-const getServices = () => new Promise(
+const getServices = (userId) => new Promise(
   (resolve, reject) => {
     Service.find(
-      {},
+      {
+        user: { $ne: userId }
+      },
       (err, services) => {
         if (err) { return reject(err); }
         resolve(services);
@@ -95,17 +98,26 @@ const getServiceById = id => getService(id);
  * Request service
  * @param id
  * @param userId
- * @param dailyHours
- * @param hourlyRate
- * @param days
+ * @param totalHours
  * @returns {Promise<any>}
  */
-const requestService = (id, userId, dailyHours, hourlyRate, days) => new Promise(
+const requestService = (id, userId, totalHours) => new Promise(
   async (resolve, reject) => {
     try {
-      const request = await addServiceRequest(userId, id);
+      const service = await getService(id);
+      const totalPrice = service.hourlyRate * totalHours;
 
-      await incrementBalance(userId, -1 * (dailyHours * hourlyRate * days));
+      const serviceRequest = new ServiceRequest({
+        service: id,
+        hours: totalHours,
+        totalPrice,
+        user: userId
+      });
+
+      await serviceRequest.save();
+      await addServiceRequest(userId, id);
+
+      await incrementBalance(userId, -1 * totalPrice);
 
       await History({
         user: userId,
@@ -113,7 +125,7 @@ const requestService = (id, userId, dailyHours, hourlyRate, days) => new Promise
         service: id
       }).save();
 
-      resolve(request);
+      resolve();
     } catch (err) {
       reject(err);
     }
