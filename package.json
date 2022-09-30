@@ -20,7 +20,7 @@
   "homepage": "https://github.com/luisarboleda17/tenme_api#readme",
   "dependencies": {
     "@hapi/boom": "^7.4.2",
-    "@hapi/hoek": "^7.2.1",
+    "@hapi/hoek": "^9.0.4",
     "@hapi/joi": "^15.1.0",
     "aws-sdk": "^2.480.0",
     "bcrypt": "^3.0.6",
